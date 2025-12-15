@@ -153,18 +153,39 @@
         white-space: nowrap;
     }
     .badge-winner-pill.large { padding: 10px 34px; font-size: 18px; }
+    #raffle-stage-badge {
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    #raffle-stage-badge.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    #raffle-stage-badge .doorprize-pill {
+        margin-top: 70px;
+    }
     /* Raffle stage layout */
     .raffle-stage {
         display: none;
-        justify-content: center;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
         gap: 24px;
-        margin-top: 150px;
+        margin-top: 0;
         flex-wrap: wrap;
         padding: 18px;
-        align-items: flex-start;
         opacity: 0;
         transform: translateY(30px);
         transition: opacity 0.6s ease, transform 0.6s ease;
+        position: relative;
+    }
+    .raffle-stage-cards {
+        display: flex;
+        justify-content: center;
+        gap: 24px;
+        flex-wrap: wrap;
+        align-items: flex-start;
     }
     .raffle-stage.show {
         opacity: 1;
@@ -319,9 +340,13 @@
         <img src="<?= base_url('uploads/prizes/' . $selectedPrize['image']) ?>" alt="<?= esc($prizeName) ?>">
       </div>
     </div>
+    <div class="raffle-stage" id="winner-box">
+      <div class="top" id="raffle-stage-badge" style="display: none;">
+        <div class="doorprize-pill">GARMIN FORERUNNER</div>
+      </div>
+      <div class="raffle-stage-cards" id="raffle-cards-container"></div>
+    </div>
   </div>
-
-  <div class="raffle-stage" id="winner-box"></div>
 
   <script>
     const prizeId = <?= (int)$selectedPrizeId ?>;
@@ -334,6 +359,8 @@
     let intervalId = null;
     const winnerBox = document.getElementById('winner-box');
     const prizeContainer = document.getElementById('prize-container');
+    const raffleStageBadge = document.getElementById('raffle-stage-badge');
+    const raffleCardsContainer = document.getElementById('raffle-cards-container');
 
     const nextPrizeId = <?= json_encode($nextPrizeId) ?>;
     let winnerSaved = false;
@@ -341,7 +368,7 @@
     let lockedCards = []; // Track which cards are locked (saved)
 
     function createRaffleCards() {
-      winnerBox.innerHTML = '';
+      raffleCardsContainer.innerHTML = '';
       lockedCards = [];
       winners = []; // Reset winners array
       for (let i = 0; i < stock; i++) {
@@ -352,7 +379,7 @@
           <div class="shimmer-box"></div>
           <div class="scroll-container d-none"></div>
         `;
-        winnerBox.appendChild(card);
+        raffleCardsContainer.appendChild(card);
         lockedCards[i] = false; // Initialize as unlocked
         winners[i] = null; // Initialize winner slot
       }
@@ -368,7 +395,7 @@
     function startRaffling() {
       const shuffledPool = [...remainingNames];
       
-      winnerBox.querySelectorAll('.raffle-card').forEach((card, index) => {
+      raffleCardsContainer.querySelectorAll('.raffle-card').forEach((card, index) => {
         // Skip locked cards
         if (lockedCards[index]) return;
 
@@ -399,7 +426,7 @@
     }
 
     function stopRaffling() {
-      winnerBox.querySelectorAll('.raffle-card').forEach((card, index) => {
+      raffleCardsContainer.querySelectorAll('.raffle-card').forEach((card, index) => {
         // Skip locked cards
         if (lockedCards[index]) return;
 
@@ -446,7 +473,7 @@
       winners[index] = null;
 
       // Reset card to initial state
-      const card = winnerBox.querySelector(`.raffle-card[data-card-index="${index}"]`);
+      const card = raffleCardsContainer.querySelector(`.raffle-card[data-card-index="${index}"]`);
       if (card) {
         card.innerHTML = `
           <div class="shimmer-box"></div>
@@ -506,7 +533,11 @@
       winners = [];
       isRaffling = false;
       winnerBox.style.display = 'flex';
+      raffleStageBadge.style.display = 'flex';
       winnerBox.classList.add('show');
+      setTimeout(() => {
+        raffleStageBadge.classList.add('show');
+      }, 10);
       createRaffleCards();
       raffleStage = 1;
     }
@@ -542,10 +573,14 @@
           setTimeout(() => {
             prizeContainer.style.display = 'none';
             winnerBox.style.display = 'flex';
+            raffleStageBadge.style.display = 'flex';
             createRaffleCards();
             // Trigger fade-in animation
             setTimeout(() => {
               winnerBox.classList.add('show');
+              setTimeout(() => {
+                raffleStageBadge.classList.add('show');
+              }, 10);
             }, 10);
           }, 300);
           raffleStage = 1;
