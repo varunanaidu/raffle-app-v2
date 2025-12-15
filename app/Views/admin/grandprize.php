@@ -87,7 +87,8 @@
             bottom: 10px;
         }
     }
-    .doorprize-pill { background: var(--white); color: #ff9124; padding: 12px 46px; border-radius: 999px; font-weight: 600; font-size: 50px; letter-spacing: 0%; box-shadow: 0 10px 26px rgba(255, 255, 255, 0.12); z-index: 40; margin-top:100px; }
+    .doorprize-pill { background: var(--white); color: #ff9124; padding: 12px 46px; border-radius: 999px; font-weight: 600; font-size: 50px; letter-spacing: 0%; box-shadow: 0 10px 26px rgba(255, 255, 255, 0.12); z-index: 40; margin-top:100px; transition: opacity 0.6s ease, transform 0.6s ease; }
+    .doorprize-pill.fade-out { opacity: 0; transform: translateY(-20px); }
     .prize-wrapper { 
         margin-top: 50px;
         width: 600px;
@@ -103,6 +104,7 @@
         left: 50%; 
         transform: translate(-50%, -50%); 
         border: 14px solid #FFB738;
+        transition: opacity 0.6s ease, transform 0.6s ease;
     }
     /* First inner white border */
     .prize-wrapper::before {
@@ -160,6 +162,13 @@
         flex-wrap: wrap;
         padding: 18px;
         align-items: flex-start;
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .raffle-stage.show {
+        opacity: 1;
+        transform: translateY(0);
     }
     /* Each raffle-card */
     .raffle-card {
@@ -261,8 +270,11 @@
         0% { transform: translateY(0); }
         100% { transform: translateY(-50%); }
     }
-    .hide-with-animation { animation: slideFadeOut 0.5s ease forwards; }
-    @keyframes slideFadeOut { 0% { opacity: 1; transform: translateX(0); } 100% { opacity: 0; transform: translateX(-100px); } }
+    .hide-with-animation { 
+        opacity: 0 !important;
+        transform: translate(-50%, -50%) scale(0.8) !important;
+        pointer-events: none;
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
@@ -494,6 +506,7 @@
       winners = [];
       isRaffling = false;
       winnerBox.style.display = 'flex';
+      winnerBox.classList.add('show');
       createRaffleCards();
       raffleStage = 1;
     }
@@ -518,12 +531,23 @@
         }
 
         if (raffleStage === 0) {
+          // Fade out prize container and doorprize pill
+          const doorprizePill = document.querySelector('.doorprize-pill');
+          if (doorprizePill) {
+            doorprizePill.classList.add('fade-out');
+          }
           prizeContainer.classList.add('hide-with-animation');
+          
+          // Show winner box with fade-in after a short delay
           setTimeout(() => {
             prizeContainer.style.display = 'none';
             winnerBox.style.display = 'flex';
             createRaffleCards();
-          }, 500);
+            // Trigger fade-in animation
+            setTimeout(() => {
+              winnerBox.classList.add('show');
+            }, 10);
+          }, 300);
           raffleStage = 1;
         } else if (raffleStage === 1 || raffleStage === 3) {
           // Start raffling (toggle on)
