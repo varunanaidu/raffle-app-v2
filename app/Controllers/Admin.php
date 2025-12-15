@@ -655,4 +655,49 @@ class Admin extends BaseController
 
         return redirect()->to('/admin/registrants')->with('message', "$new new registrants synced.");
     }
+
+    public function resetWinners()
+    {
+        try {
+            $db = \Config\Database::connect();
+            
+            // Truncate winners table
+            $db->query('TRUNCATE TABLE winners');
+            
+            // Reset all raffled fields in prizes table to 0
+            $db->table('prizes')->update(['raffled' => 0]);
+            
+            return $this->response->setJSON([
+                'status' => 'success',
+                'message' => 'Winners table truncated and all prizes raffled status reset to 0'
+            ]);
+        } catch (\Exception $e) {
+            log_message('error', 'Error resetting winners: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Error resetting: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    public function resetRegistrants()
+    {
+        try {
+            $db = \Config\Database::connect();
+            
+            // Truncate registran table
+            $db->query('TRUNCATE TABLE registran');
+            
+            return $this->response->setJSON([
+                'status' => 'success',
+                'message' => 'Registrants table truncated'
+            ]);
+        } catch (\Exception $e) {
+            log_message('error', 'Error resetting registrants: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Error resetting: ' . $e->getMessage()
+            ]);
+        }
+    }
 }

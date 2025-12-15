@@ -12,8 +12,10 @@ $routes->post('/admin/savePrize', 'Admin::savePrize');
 $routes->get('/admin/deletePrize/(:num)', 'Admin::deletePrize/$1');
 
 $routes->get('/admin/registrants', 'Admin::registrants');
+$routes->post('/admin/reset-registrants', 'Admin::resetRegistrants');
 $routes->get('/admin/winners', 'Admin::winners');
 $routes->post('/admin/update-winner-status', 'Admin::updateWinnerStatus');
+$routes->post('/admin/reset-winners', 'Admin::resetWinners');
 $routes->get('/admin/raffle', 'Admin::raffle');
 
 $routes->post('admin/save-winner', 'Admin::postSaveWinner');

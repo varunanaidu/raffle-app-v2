@@ -107,7 +107,7 @@
 <body>
     <div class="container">
         <div class="logo-container">
-            <img src="/images/maglogoblack.png" alt="MAG 2025 MEDCO AMPERA GAMES BEYOND" class="logo-image">
+            <img src="/images/maglogoblack.svg" alt="MAG 2025 MEDCO AMPERA GAMES BEYOND" class="logo-image">
         </div>
 
         <div class="success-icon">

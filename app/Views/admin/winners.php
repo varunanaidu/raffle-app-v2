@@ -3,6 +3,19 @@
 
 <h4>Winner List</h4>
 
+<div class="mb-3">
+    <button 
+        type="button" 
+        class="btn btn-danger btn-sm reset-winners-btn" 
+        title="Reset semua winners dan status raffled prizes">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-counterclockwise" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z"/>
+            <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z"/>
+        </svg>
+        Reset Winners
+    </button>
+</div>
+
 <table class="table">
     <thead>
         <tr>
@@ -105,6 +118,46 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+
+    // Reset winners button handler
+    const resetBtn = document.querySelector('.reset-winners-btn');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', function() {
+            if (!confirm('Yakin ingin menghapus semua winners dan reset status raffled semua prizes? Tindakan ini tidak dapat dibatalkan!')) {
+                return;
+            }
+
+            // Disable button
+            this.disabled = true;
+            const originalText = this.innerHTML;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Resetting...';
+
+            // Send AJAX request
+            fetch('/admin/reset-winners', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Berhasil reset winners dan status raffled!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + (data.message || 'Failed to reset'));
+                    this.disabled = false;
+                    this.innerHTML = originalText;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error: Failed to reset');
+                this.disabled = false;
+                this.innerHTML = originalText;
+            });
+        });
+    }
 });
 </script>
 

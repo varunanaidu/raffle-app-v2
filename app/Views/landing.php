@@ -127,7 +127,7 @@
 <body onclick="redirectToRegister()">
     <div class="landing-container">
         <div class="logo-wrapper">
-            <img src="/images/maglogo.png" alt="MAG 2025 MEDCO AMPERA GAMES BEYOND" class="logo-image">
+            <img src="/images/maglogo.svg" alt="MAG 2025 MEDCO AMPERA GAMES BEYOND" class="logo-image">
         </div>
         
         <div class="loading-text">Tap untuk melanjutkan...</div>
